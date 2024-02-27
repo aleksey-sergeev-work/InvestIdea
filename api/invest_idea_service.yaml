@@ -1,0 +1,170 @@
+openapi: 3.0.2
+info:
+  title: Invest Idea Service
+  description: "Сервис, реализующий работу c инвестидеями"
+  version: 1.0.0
+servers:
+- url: https://investapp.com/api/v1
+tags:
+- name: invest_idea
+  description: Инвестидеи
+#- name: growth_factor
+#  description: Фаторы роста
+paths:
+  # /growth_factors:
+  #   get:
+  #     tags:
+  #       - growth_factor
+  #     description: Получает список факторов роста
+  #     operationId: getGrowthFactors
+  #     responses:
+  #       "200":
+  #         description: Successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/InvestIdea'
+  #     security:
+  #     - investments_auth:
+  #       - view:invest_ideas
+  /invest_ideas:
+    post:
+      tags:
+      - invest_idea
+      summary: Получает список инвестидей
+      description: Получает список инвестидей по заданным параметрам
+      operationId: getInvestIdeas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvestIdeaFilter'
+        required: false
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvestIdea'
+        "405":
+          description: Invalid input
+      security:
+      - investments_auth:
+        - view:invest_ideas
+components:
+  schemas:
+    InvestIdeaFilter:
+      type: object
+      properties:
+#        securities:
+#          type: array
+#          items:
+#            type: integer
+#            format: int64
+#        growthFactors:
+#          type: array
+#          items:
+#            type: integer
+#            format: int64
+        buyDateStart:
+          type: string
+          format: date
+#        buyDateEnd:
+#          type: string
+#          format: date
+#        buyRateLowerBound:
+#          type: number
+#          format: currency
+#        buyRateUpperBound:
+#          type: number
+#          format: currency
+#        sellDateStart:
+#          type: string
+#          format: date
+        sellDateEnd:
+          type: string
+          format: date
+#        sellRateLowerBound:
+#          type: number
+#          format: currency
+#        sellRateUpperBound:
+#          type: number
+#          format: currency
+    GrowthFactor:
+      type: object
+      description: фактор роста
+      required:
+        - id
+        - description
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: идентификатор фактора роста
+        description:
+          type: string
+          description: описание фактор роста
+#          maxLength: 255
+    InvestIdea:
+      type: object
+      description: инвестиционная идея
+      required:
+        - id
+        - description
+        - growthFactors
+        - buyDate
+        - buyRate
+        - sellDate
+        - sellRate
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: идентификатор инвестидеи
+        name:
+          type: string
+          description: наименование инвестидеи
+#          maxLength: 50
+        security:
+          $ref: '#/components/schemas/Security'
+        description:
+          type: string
+          description: описание инвестидеи
+        growthFactors:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrowthFactor'
+        buyDate:
+          type: string
+          format: date
+        buyRate:
+          type: number
+          format: currency
+        sellDate:
+          type: string
+          format: date
+    Security:
+      type: object
+      description: ценная бумага
+      properties: 
+        id: 
+          type: integer
+          format: int64
+          description: идентификатор ценной бумаги
+        name:
+          type: string
+#          maxLength: 255
+          description: наименование ценной бумаги
+  securitySchemes:
+    investments_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://investapp.com/oauth/authorize
+          scopes:
+            'view:invest_ideas': Просмотр инвестидей
