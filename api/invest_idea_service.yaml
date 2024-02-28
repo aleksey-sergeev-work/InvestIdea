@@ -160,6 +160,9 @@ components:
           type: string
 #          maxLength: 255
           description: наименование ценной бумаги
+        # currency:
+        #   type: string
+        #   description: валюта, в которой торгуется ценная бумага
   securitySchemes:
     investments_auth:
       type: oauth2
